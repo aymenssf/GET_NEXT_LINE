@@ -6,7 +6,7 @@
 /*   By: aassaf <aassaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 09:32:36 by aassaf            #+#    #+#             */
-/*   Updated: 2023/12/06 13:43:14 by aassaf           ###   ########.fr       */
+/*   Updated: 2023/12/06 17:31:02 by aassaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	found_newline(t_list *lst)
 	}
 	return (0);
 }
+
 void	add_to_lst(t_list **lst, char *buff, int nb_read)
 {
 	int		i;
@@ -57,6 +58,7 @@ void	add_to_lst(t_list **lst, char *buff, int nb_read)
 	tmp = ft_lstlast(*lst);
 	tmp->next = new_node;
 }
+
 void	read_and_store(int fd, t_list **lst)
 {
 	int		nb_read;
@@ -82,11 +84,17 @@ void	read_and_store(int fd, t_list **lst)
 
 char	*get_next_line(int fd)
 {
-	static t_list	*lst = NULL;
+	static t_list	*lst;
 	char			*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 )
 		return (NULL);
+	if (read(fd, &line, 0) < 0)
+	{
+		free_all(lst);
+		lst = NULL;
+		return (NULL);
+	}
 	line = NULL;
 	read_and_store(fd, &lst);
 	if (lst == NULL)
@@ -103,15 +111,18 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-/* int main()
-{
-		int fd;
-		char *line;
-		fd = open("test.txt", O_RDONLY);
-		while((line = get_next_line(fd)))
-		{
-				printf("%s\n", line);
-				free(line);
-		}
-		return (0);
-} */
+//  int main()
+// {
+// 		int fd;
+// 		char *line;
+// 		fd = open("test2.txt", O_RDONLY);
+// 		// while((line = get_next_line(fd)))
+// 		// {
+// 		// 		printf("%s\n", line);
+// 		// 		free(line);
+// 		// }
+// 		char *str1 = get_next_line(fd);
+// 		//remove file
+// 		char *str = get_next_line(fd);
+// 		return (0);
+// }
