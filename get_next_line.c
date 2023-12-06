@@ -6,7 +6,7 @@
 /*   By: aassaf <aassaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 09:32:36 by aassaf            #+#    #+#             */
-/*   Updated: 2023/12/06 17:31:02 by aassaf           ###   ########.fr       */
+/*   Updated: 2023/12/06 19:48:13 by aassaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char	*get_next_line(int fd)
 	static t_list	*lst;
 	char			*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 )
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX)
 		return (NULL);
 	if (read(fd, &line, 0) < 0)
 	{
