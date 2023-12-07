@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aassaf <aassaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/06 18:42:51 by aassaf            #+#    #+#             */
-/*   Updated: 2023/12/06 18:52:54 by aassaf           ###   ########.fr       */
+/*   Created: 2023/12/01 09:32:31 by aassaf            #+#    #+#             */
+/*   Updated: 2023/12/07 14:17:40 by aassaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -37,6 +37,25 @@ t_list	*ft_lstlast(t_list *lst)
 	}
 	return (tmp);
 }
+
+int	found_newline(t_list *lst)
+{
+	int		i;
+	t_list	*tmp;
+
+	if (lst == NULL)
+		return (0);
+	tmp = ft_lstlast(lst);
+	i = 0;
+	while (tmp->content[i])
+	{
+		if (tmp->content[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	create_line(char **line, t_list *lst)
 {
 	int	i;
@@ -60,33 +79,6 @@ void	create_line(char **line, t_list *lst)
 	}
 	*line = malloc(sizeof(char) * (len + 1));
 }
-void	copy_line(t_list *lst, char **line)
-{
-	int	i;
-	int	j;
-
-	j = 0;
-	if (lst == NULL)
-		return ;
-	create_line(line, lst);
-	if (*line == NULL)
-		return ;
-	while (lst)
-	{
-		i = 0;
-		while (lst->content[i])
-		{
-			if (lst->content[i] == '\n')
-			{
-				(*line)[j++] = lst->content[i];
-				break ;
-			}
-			(*line)[j++] = lst->content[i++];
-		}
-		lst = lst->next;
-	}
-	(*line)[j] = '\0';
-}
 
 void	free_all(t_list *lst)
 {
@@ -101,33 +93,4 @@ void	free_all(t_list *lst)
 		free(tmp);
 		tmp = next;
 	}
-}
-
-void	clear_lst(t_list **lst)
-{
-	t_list	*tmp;
-	t_list	*new_node;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	new_node = malloc(sizeof(t_list));
-	if (!lst || !new_node)
-		return ;
-	new_node->next = NULL;
-	tmp = ft_lstlast(*lst);
-	while (tmp->content[i] && tmp->content[i] != '\n')
-		i++;
-	if (tmp->content && tmp->content[i] == '\n')
-		i++;
-	new_node->content = malloc(sizeof(char) * (ft_strlen(tmp->content) - i)
-			+ 1);
-	if (new_node->content == NULL)
-		return ;
-	while (tmp->content[i])
-		new_node->content[j++] = tmp->content[i++];
-	new_node->content[j] = '\0';
-	free_all(*lst);
-	*lst = new_node;
 }
