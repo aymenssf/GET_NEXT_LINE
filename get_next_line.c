@@ -6,30 +6,68 @@
 /*   By: aassaf <aassaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 09:32:36 by aassaf            #+#    #+#             */
-/*   Updated: 2023/12/06 19:48:13 by aassaf           ###   ########.fr       */
+/*   Updated: 2023/12/07 20:42:57 by aassaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	found_newline(t_list *lst)
+void	clear_lst(t_list **lst)
 {
-	int		i;
 	t_list	*tmp;
+	t_list	*new_node;
+	int		i;
+	int		j;
 
-	if (lst == NULL)
-		return (0);
-	tmp = ft_lstlast(lst);
 	i = 0;
-	while (tmp->content[i])
-	{
-		if (tmp->content[i] == '\n')
-			return (1);
+	j = 0;
+	new_node = malloc(sizeof(t_list));
+	if (!lst || !new_node)
+		return ;
+	new_node->next = NULL;
+	tmp = ft_lstlast(*lst);
+	while (tmp->content[i] && tmp->content[i] != '\n')
 		i++;
-	}
-	return (0);
+	if (tmp->content && tmp->content[i] == '\n')
+		i++;
+	new_node->content = malloc(sizeof(char) * (ft_strlen(tmp->content) - i)
+			+ 1);
+	if (new_node->content == NULL)
+		return ;
+	while (tmp->content[i])
+		new_node->content[j++] = tmp->content[i++];
+	new_node->content[j] = '\0';
+	free_all(*lst);
+	*lst = new_node;
 }
 
+void	copy_line(t_list *lst, char **line)
+{
+	int	i;
+	int	j;
+
+	j = 0;
+	if (lst == NULL)
+		return ;
+	create_line(line, lst);
+	if (*line == NULL)
+		return ;
+	while (lst)
+	{
+		i = 0;
+		while (lst->content[i])
+		{
+			if (lst->content[i] == '\n')
+			{
+				(*line)[j++] = lst->content[i];
+				break ;
+			}
+			(*line)[j++] = lst->content[i++];
+		}
+		lst = lst->next;
+	}
+	(*line)[j] = '\0';
+}
 void	add_to_lst(t_list **lst, char *buff, int nb_read)
 {
 	int		i;
@@ -87,7 +125,7 @@ char	*get_next_line(int fd)
 	static t_list	*lst;
 	char			*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
 	if (read(fd, &line, 0) < 0)
 	{
@@ -111,18 +149,15 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-//  int main()
-// {
-// 		int fd;
-// 		char *line;
-// 		fd = open("test2.txt", O_RDONLY);
-// 		// while((line = get_next_line(fd)))
-// 		// {
-// 		// 		printf("%s\n", line);
-// 		// 		free(line);
-// 		// }
-// 		char *str1 = get_next_line(fd);
-// 		//remove file
-// 		char *str = get_next_line(fd);
-// 		return (0);
-// }
+int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("test2.txt", O_RDONLY);
+	while ((line = get_next_line(fd)))
+	{
+		printf("%s\n", line);
+		free(line);
+	}
+}
